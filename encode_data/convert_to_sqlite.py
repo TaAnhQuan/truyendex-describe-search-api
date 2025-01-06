@@ -39,8 +39,9 @@ def populate_database(connection, csv_file):
     df['combined'] = df.drop(columns=['manga_id']).apply(lambda row: ' '.join(row.values.astype(str)), axis=1)
     df['embedding'] = df['combined'].apply(lambda x: model.encode(x, convert_to_tensor=True))
     df['embedding_str'] = df['embedding'].apply(lambda emb: ','.join(map(str, emb)))
-    df = df.drop(['combined', 'title', 'sfw', 'genres', 'themes', 'demographics', 'authors', 'synopsis', 'background', 'title_synonyms', "embedding"], axis=1)
-
+    df = df.drop(['combined', 'sfw', 'genres', 'themes', 'demographics', 'authors', 'synopsis', 'background', 'title_synonyms', "embedding"], axis=1)
+    df = df.dropna()
+    df = df.drop_duplicates()
     df.to_sql('manga', connection, if_exists='replace', index=False)
 
 def main():
