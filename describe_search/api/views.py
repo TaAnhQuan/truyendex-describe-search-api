@@ -4,8 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Manga
 from .serializers import MangaSerializer
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer
+import numpy as np
 
 class MangaSearchView(APIView):
     def get(self, request):
@@ -16,16 +17,19 @@ class MangaSearchView(APIView):
         mangas = Manga.objects.all()
         serializer = MangaSerializer(mangas, many=True)
 
-        synopses = []
+        embedding_data = []
         
         for i in range(0, len(mangas)):
-            synopses.append(mangas[i].synopsis)
+            embedding_data.append(np.array([float(x.split('(')[-1].split(')')[0]) for x in mangas[i].embedding.split(',')]))
         
-        tfidf = TfidfVectorizer(max_features=5000, stop_words='english')
-        synopses_tfidf = tfidf.fit_transform(synopses)
-        describe_tfidf = tfidf.transform([describe])
+        embedding_data = np.array(embedding_data)
 
-        cosine_similarities = cosine_similarity(describe_tfidf, synopses_tfidf).flatten()
+        model = SentenceTransformer('..\\semantic_model')
+        describe_embedding = model.encode(describe)
+        describe_embedding = describe_embedding.reshape(1, -1)
+
+
+        cosine_similarities = cosine_similarity(describe_embedding, embedding_data).flatten()
         top_n_indices = cosine_similarities.argsort()[-5:][::-1]
         top_describes = top_n_indices[0].item()
         
@@ -36,6 +40,8 @@ class MangaSearchView(APIView):
         
         # Serialize the results
         serializer = MangaSerializer(title, many=True)
+
+        # Extract only the 'title' from the serialized data
+        result_titles = [item['title'] for item in serializer.data]
     
-        print(type(serializer))
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(result_titles, status=status.HTTP_200_OK)
