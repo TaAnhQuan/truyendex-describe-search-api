@@ -40,5 +40,8 @@ class MangaSearchView(APIView):
         
         # Serialize the results
         serializer = MangaSerializer(title, many=True)
+
+        # Extract only the 'title' from the serialized data
+        result_titles = [item['title'] for item in serializer.data]
     
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(result_titles, status=status.HTTP_200_OK)
