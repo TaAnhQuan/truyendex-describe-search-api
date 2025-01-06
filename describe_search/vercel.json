@@ -2,7 +2,7 @@
 
     "builds": [{
 
-        "src": "../describe_search/desribe_search/wsgi.py",
+        "src": "desribe_search/wsgi.py",
 
         "use": "@vercel/python",
 
@@ -14,9 +14,9 @@
 
         {
 
-            "src": "../dessribe_search/(.*)",
+            "src": "/(.*)",
 
-            "dest": "describe_search/desribe_search/wsgi.py"
+            "dest": "desribe_search/wsgi.py"
 
         }
 
