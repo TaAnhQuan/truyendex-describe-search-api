@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-*7yyww(jbewax47k@itdjvv(g9w**=x2_^jptasmukjy_!g==6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.vercel.app']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
 
 
 # Application definition
@@ -131,4 +131,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Frontend origin
     "http://127.0.0.1:8000",
+    "http://localhost:3001",
+    "https://truyendex.com/nettrom"
 ]
